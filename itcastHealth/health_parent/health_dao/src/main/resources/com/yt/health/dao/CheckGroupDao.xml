@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.health.dao.CheckGroupDao">
+    <select id="findAll" resultType="checkitem">
+        select * from t_checkitem
+    </select>
+
+    <insert id="add" parameterType="checkgroup">
+        insert into t_checkgroup(code,name,helpCode,sex,remark,attention)
+        values(#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+        <!--selectKey  会将 SELECT LAST_INSERT_ID()的结果放入到传入的model的主键里面，
+            keyProperty 对应的model中的主键的属性名，这里是 user 中的id，因为它跟数据库的主键对应
+            order AFTER 表示 SELECT LAST_INSERT_ID() 在insert执行之后执行,多用与自增主键，
+            BEFORE 表示 SELECT LAST_INSERT_ID() 在insert执行之前执行，这样的话就拿不到主键了，
+            这种适合那种主键不是自增的类型
+            resultType 主键类型
+        -->
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="addCheckGroupCheckItem" parameterType="map">
+        insert into t_checkgroup_checkitem(checkgroup_id,checkitem_id)
+        values(#{gid},#{id})
+    </insert>
+
+    <select id="findPage" parameterType="String" resultType="checkGroup">
+        select * from t_checkgroup
+        <if test="value != null and value.length > 0">
+            where code like #{value} or name like #{value} or helpCode like #{value}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="CheckGroup">
+        select * from t_checkgroup
+        where id = #{id}
+    </select>
+
+    <delete id="deleteCheckGroupCheckItem" parameterType="int">
+        delete from t_checkgroup_checkitem
+        where checkgroup_id = #{gid}
+    </delete>
+
+    <update id="update" parameterType="CheckGroup">
+        update t_checkgroup
+        set  code = #{code },name = #{name },helpCode = #{helpCode },sex = #{sex},remark = #{remark}
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        delete from t_checkgroup
+        where id = #{id}
+    </delete>
+
+    <select id="findSetmealCountByCheckGroupId" parameterType="int" resultType="int">
+        select count(1) from t_setmeal_checkgroup
+        where checkgroup_id = #{gid}
+    </select>
+
+    <select id="findCheckItemsByCheckGroupId" parameterType="int" resultType="int">
+        select checkitem_id from t_checkgroup_checkitem
+        where checkgroup_id = #{gid}
+    </select>
+
+    <!--根据套餐id查询检查项信息-->
+    <select id="findCheckGroupListById" resultMap="findByIdResultMap">
+        select * from t_checkgroup  where id
+        in (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id})
+    </select>
+
+
+    <resultMap type="com.yt.health.pojo.CheckGroup" id="findByIdResultMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <collection property="checkItems" column="id"
+                    select="com.yt.health.dao.CheckItemDao.findCheckItemListById">
+        </collection>
+    </resultMap>
+</mapper>

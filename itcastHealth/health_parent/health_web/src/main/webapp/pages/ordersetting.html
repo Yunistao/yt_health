@@ -144,13 +144,12 @@
                    var month = this.currentYear+"-"+(this.currentMonth>9?this.currentMonth:"0"+this.currentMonth)
                    // alert(month);
                   axios.get("/ordersetting/getOrderSettingByMonth.do?date="+month).then(res=>{
-                      this.$message({
-                          message: res.data.message,
-                          type: res.data.flag?"success":"error"
-                      })
+
                       if (res.data.flag) {
                           // 绑定数据
                           this.leftobj=res.data.data;
+                      }else{
+                          this.$message.error(res.data.message)
                       }
                   })
                 },

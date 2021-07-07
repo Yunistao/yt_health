@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yt.dao.MemberDao" >
-    <select id="findAll" resultType="com.yt.pojo.Member">
+<mapper namespace="com.yt.health.dao.MemberDao" >
+    <select id="findAll" resultType="com.yt.health.pojo.Member">
         select * from t_member
     </select>
 
     <!--根据条件查询-->
-    <select id="selectByCondition" parameterType="string" resultType="com.yt.pojo.Member">
+    <select id="selectByCondition" parameterType="string" resultType="com.yt.health.pojo.Member">
         select * from t_member
         <if test="value != null and value.length > 0">
             where fileNumber = #{value} or phoneNumber = #{value} or name = #{value}
@@ -15,7 +15,7 @@
     </select>
 
     <!--新增会员-->
-    <insert id="add" parameterType="com.yt.pojo.Member">
+    <insert id="add" parameterType="com.yt.health.pojo.Member">
         <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -29,17 +29,17 @@
     </delete>
 
     <!--根据id查询会员-->
-    <select id="findById" parameterType="int" resultType="com.yt.pojo.Member">
+    <select id="findById" parameterType="int" resultType="com.yt.health.pojo.Member">
         select * from t_member where id = #{id}
     </select>
 
     <!--根据id查询会员-->
-    <select id="findByTelephone" parameterType="string" resultType="com.yt.pojo.Member">
+    <select id="findByTelephone" parameterType="string" resultType="com.yt.health.pojo.Member">
         select * from t_member where phoneNumber = #{phoneNumber}
     </select>
 
     <!--编辑会员-->
-    <update id="edit" parameterType="com.yt.pojo.Member">
+    <update id="edit" parameterType="com.yt.health.pojo.Member">
         update t_member
         <set>
             <if test="fileNumber != null">

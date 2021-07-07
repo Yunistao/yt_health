@@ -8,6 +8,7 @@ import com.yt.health.entity.Result;
 import com.yt.health.pojo.CheckItem;
 import com.yt.health.service.CheckItemService;
 import org.apache.zookeeper.Op;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class CheckItemController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('CHECKITEM_ADD')")
     public Result add(@RequestBody CheckItem checkItem){
         checkItemService.add(checkItem);
         return new Result(true,MessageConstant.ADD_CHECKITEM_SUCCESS);
